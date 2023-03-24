@@ -12,7 +12,7 @@ public class SceneGamePlayMaster : MonoBehaviour
     public static GameObject unit_prefab;
     public static GameObject sa_bullet_prefab;
     private Coroutine targets_game_play_coroutine;
-    
+    public SpawnUnitsMenu spawn_menu;
 
 
     private void Awake()
@@ -27,27 +27,17 @@ public class SceneGamePlayMaster : MonoBehaviour
 
     void Start()
     {
-        //StartCorouinez();
+        spawn_menu.gameObject.SetActive(false);
     }
 
-    private void StartCorouinez()
-    {
-        //targets_game_play_coroutine = StartCoroutine(UnitsTargetsCoroutine());
-    }
-    private void StopCoroutinez()
-    {
-        StopCoroutine(targets_game_play_coroutine);
-    }
 
     public void OnDestroyUnit(UnitProcessor x)
     {
         SceneGameContainer.units.Remove(x);
         foreach (var unit in SceneGameContainer.units)
         {
-            //print(unit.target + " " + x);
             if (unit.target == x.gameObject)
             {
-                //print("Remved target from " + unit);
                 unit.target = null;
                 unit.target_is_enemy = false;
                 unit.self_mode = UnitModes.Idle;
@@ -59,11 +49,20 @@ public class SceneGamePlayMaster : MonoBehaviour
         SceneGameContainer.units.Add(x);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
+    public void OnClickApplyButtonTowers() {
+        (TowerTypes tt, SpawnMenuItemsData smid) = spawn_menu.GetData();
+        var cur_t = SceneGameContainer.towers[tt].GetComponent<TowerProcessor>();
+        cur_t.spawn_parameters.tower_spawn_speed = smid.tower_spawn_speed;
+        cur_t.spawn_parameters.move_speed = smid.move_speed;
+        cur_t.spawn_parameters.enemy_detect_radius = smid.enemy_detect_radius;
+        spawn_menu.gameObject.SetActive(false);
     }
+    
+    public void ActivateSpawnMenu(TowerTypes tt, SpawnMenuItemsData spawn_params) {
+        spawn_menu.gameObject.SetActive(true);
+        spawn_menu.SetData(tt, spawn_params);
+    }
+    
 
     private void OnDestroy()
     {

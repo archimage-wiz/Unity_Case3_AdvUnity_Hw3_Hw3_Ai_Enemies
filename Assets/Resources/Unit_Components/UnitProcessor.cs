@@ -10,18 +10,18 @@ public class UnitProcessor : MonoBehaviour
     private Rigidbody self_rigidbody;
     private HealthBar self_healthbar;
     public GameObject target;
+    [SerializeField] private LayerMask layers;
     private Coroutine self_engine;
     private LineRenderer lineRenderer;
-    //private StrongAttackBullet bullet;
     public TowerTypes self_type;
     public UnitModes self_mode;
     public bool target_is_enemy;
     private bool laser_draw = false;
-    private float move_speed = 0.005f;
+    public float move_speed = 0.9f;
     private float FastAttackRange = 1.0f;
     private float StrongAttackMaxRange = 2.7f;
     private float StrongAttackMinRange = 1.2f;
-    private float enemy_detect_radius = 5.0f;
+    public float enemy_detect_radius = 5.0f;
     private int health = 100;
     private float FastAttackWeight = 1;
     private float StrongAttackWeight = 1f;
@@ -31,14 +31,10 @@ public class UnitProcessor : MonoBehaviour
     {
         self_rigidbody = this.GetComponent<Rigidbody>();
         self_healthbar = GetComponentInChildren<HealthBar>();
-        //bullet = GetComponentInChildren<StrongAttackBullet>();
-        //bullet.gameObject.SetActive(false);
         lineRenderer = GetComponent<LineRenderer>();
         self_mode = UnitModes.Idle;
         SceneGamePlayMaster.OnNewUnit(this);
         self_engine = StartCoroutine(Engine());
-
-
     }
 
     private void FollowTFleeT(bool fleee)
@@ -48,7 +44,7 @@ public class UnitProcessor : MonoBehaviour
             var target_pos = target.transform.position;
             var units_distance = Vector3.Distance(transform.position, target.transform.position);
 
-            if (units_distance >= FastAttackRange) { transform.position = Vector3.MoveTowards(transform.position, target_pos, move_speed); }
+            if (units_distance >= FastAttackRange - 0.001f) { transform.position = Vector3.MoveTowards(transform.position, target_pos, move_speed * Time.deltaTime); }
             Vector3 xx = new Vector3(target_pos.x, transform.position.y, target_pos.z);
             transform.LookAt(xx);
             
@@ -57,7 +53,7 @@ public class UnitProcessor : MonoBehaviour
     private void SeekT(bool flee)
     {
         bool ifound_target = false;
-        Collider[] units_in_radius = Physics.OverlapSphere(transform.position, enemy_detect_radius, LayerMask.GetMask("Units"));
+        Collider[] units_in_radius = Physics.OverlapSphere(transform.position, enemy_detect_radius, layers);
         if (units_in_radius.Length > 0 && flee == false)
         {
             foreach (var found_unit in units_in_radius)
@@ -90,7 +86,6 @@ public class UnitProcessor : MonoBehaviour
             if (t_scr != null) {
                 if (t_scr) SceneGameContainer.e_proc.DamageDeal(t_scr, 12);
             }
-            //print("fast attack " + FastAttackWeight);
         }
     } 
     private void StrongAttack()
@@ -103,7 +98,6 @@ public class UnitProcessor : MonoBehaviour
             var bullet_script = bullet.GetComponent<StrongAttackBullet>();
             bullet_script.life_time_frames = 1250;
             bullet_script.class_ = self_type;
-            //print("strong attack " + StrongAttackWeight);
             StrongAttackWeight -= 10.0f;
         }
     }
@@ -117,7 +111,6 @@ public class UnitProcessor : MonoBehaviour
             {
                 case UnitModes.Idle:
                     self_mode = UnitModes.Stay;
-                    //print("idle");
                     wait_time = 1.0f;
                     break;
                 case UnitModes.FollowAndSeek:
@@ -125,18 +118,17 @@ public class UnitProcessor : MonoBehaviour
                     if (target_is_enemy == false) { SeekT(false); }
                     if (target == null) { self_mode = UnitModes.Idle; break; }
                     var u_t_distance = Vector3.Distance(transform.position, target.transform.position);
+                    if (u_t_distance < FastAttackRange && target_is_enemy)
+                    {
+                        self_mode = UnitModes.FastAttack;
+                    }
                     if (u_t_distance < StrongAttackMaxRange && u_t_distance > StrongAttackMinRange && target_is_enemy) {
                         StrongAttackWeight += 0.01f;
                         if (FastAttackWeight < StrongAttackWeight) {
                             self_mode = UnitModes.StrongAttack;
                         }
                     }
-                    if (u_t_distance < FastAttackRange && FastAttackWeight > StrongAttackWeight && target_is_enemy)
-                    {
-                        self_mode = UnitModes.FastAttack;
-                    }
                     if (health < 25) {
-                        //print("Flee " + health);
                         target = null;
                         target_is_enemy = false;
                         self_mode = UnitModes.Flee;
@@ -148,7 +140,6 @@ public class UnitProcessor : MonoBehaviour
                     if (target == null) { SeekT(true); }
                     self_healthbar.SetHealthBar(health);
                     if (health > 50) {
-                        //print("heath complete");
                         target = null;
                         self_mode = UnitModes.Idle; 
                     }

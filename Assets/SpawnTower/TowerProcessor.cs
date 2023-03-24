@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class TowerProcessor : MonoBehaviour
+public class TowerProcessor : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private TowerTypes tower_type;
     [SerializeField]
-    private float spawn_time = 10;
-
+    private float spawn_time = 12;
+    public SpawnMenuItemsData spawn_parameters;
     private Coroutine units_spawner_coroutine;
     
     private void Awake() {
@@ -17,7 +19,10 @@ public class TowerProcessor : MonoBehaviour
 
     void Start()
     {
-        
+        spawn_parameters = new SpawnMenuItemsData();
+        spawn_parameters.tower_spawn_speed = spawn_time;
+        spawn_parameters.move_speed = 0.95f;
+        spawn_parameters.enemy_detect_radius = 5.1f;
         units_spawner_coroutine = StartCoroutine(UnitsSpawnCoroutine());
     }
 
@@ -33,15 +38,18 @@ public class TowerProcessor : MonoBehaviour
 
             this.transform.Rotate(0, Random.Range(-45, 45), 0);
             new_unit.transform.position = this.transform.position + this.transform.forward.normalized;
-            
 
-            yield return new WaitForSeconds(spawn_time);
+            new_unit_script.move_speed = spawn_parameters.move_speed;
+            
+            new_unit_script.enemy_detect_radius = spawn_parameters.enemy_detect_radius;
+            yield return new WaitForSeconds(spawn_parameters.tower_spawn_speed);
         }
 
     }
-
-    private void OnDestroy()
-    {
-        //StopCoroutine(units_spawner_coroutine);
+    
+    public void OnPointerClick(PointerEventData eventData) {
+        SceneGameContainer.scene_master.ActivateSpawnMenu(tower_type, spawn_parameters);
     }
+
+
 }

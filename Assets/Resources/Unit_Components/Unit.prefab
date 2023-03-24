@@ -274,8 +274,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
+  layers:
+    serializedVersion: 2
+    m_Bits: 1024
   self_type: 0
   self_mode: 0
+  target_is_enemy: 0
 --- !u!65 &6409290282483439412
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -480,7 +484,7 @@ BoxCollider:
   m_GameObject: {fileID: 3476930096496154862}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}

@@ -9,7 +9,7 @@
                     "name": "CameraRotation",
                     "type": "Value",
                     "id": "19cdf9a6-9ed1-45c5-a4c3-67a0f606f110",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -17,9 +17,9 @@
             ],
             "bindings": [
                 {
-                    "name": "1D Axis",
-                    "id": "e041fb4c-b56a-429f-9509-2dcfe81d440a",
-                    "path": "1DAxis",
+                    "name": "2D Vector",
+                    "id": "0d05b603-72b0-4c88-98d7-ee66acba40b0",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -28,8 +28,30 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "negative",
-                    "id": "11ec7042-b8ca-41c2-bde2-ed065d58d9e8",
+                    "name": "up",
+                    "id": "694278a1-968a-4888-acf8-0ec801c2c266",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "81bf094e-d54c-4f7f-a0d4-9554e7084e4c",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CameraRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "bed21d3d-47fb-4d0d-a7cd-c23fd5c6d5ba",
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
@@ -39,8 +61,8 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "positive",
-                    "id": "deb1ae1e-5434-4c5e-baa0-f2f2aad50773",
+                    "name": "right",
+                    "id": "e843ad33-9d91-4de8-9d17-8f5e8a695e1a",
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",

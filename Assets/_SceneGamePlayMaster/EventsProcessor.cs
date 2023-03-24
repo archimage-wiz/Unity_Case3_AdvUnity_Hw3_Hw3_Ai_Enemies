@@ -18,9 +18,9 @@ public class EventsProcessor : MonoBehaviour
         
     }
     
-    public void DamageDeal(UnitProcessor x, int damage) {
-        if (x.gameObject.activeSelf) {
-            x.GetDamage(damage);
+    public void DamageDeal(UnitProcessor UnitScript, int damage) {
+        if (UnitScript.gameObject.activeSelf) {
+            UnitScript.GetDamage(damage);
         }
     }
     
