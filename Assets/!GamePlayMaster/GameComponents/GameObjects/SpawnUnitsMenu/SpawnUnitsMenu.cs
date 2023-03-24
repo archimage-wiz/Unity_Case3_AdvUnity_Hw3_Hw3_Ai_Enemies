@@ -13,6 +13,11 @@ public class SpawnUnitsMenu : MonoBehaviour
     [SerializeField] private TMP_InputField move_speed_text;
     private TowerTypes tower_type;
 
+    private void Start() {
+        GameLinksContainer.spawn_menu = this;
+        GameLinksContainer.spawn_menu.gameObject.SetActive(false);
+    }
+    
     public (TowerTypes, SpawnMenuItemsData) GetData() {
         var ret_val = new SpawnMenuItemsData();
 

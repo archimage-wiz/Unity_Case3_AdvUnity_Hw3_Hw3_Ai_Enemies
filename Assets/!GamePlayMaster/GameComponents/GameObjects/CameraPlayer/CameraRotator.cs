@@ -13,7 +13,7 @@ public class CameraRotator : MonoBehaviour
 
     void Update()
     {
-        input_status = SceneGameContainer.input_x.InputMap.CameraRotation.ReadValue<Vector2>();
+        input_status = GameLinksContainer.input_x.InputMap.CameraRotation.ReadValue<Vector2>();
 
         if (input_status.x > 0) { transform.position += camera_move_speed * Time.deltaTime * transform.right; }
         if (input_status.x < 0) { transform.position += camera_move_speed * Time.deltaTime * -transform.right; }

@@ -21,7 +21,7 @@ public class StrongAttackBullet : MonoBehaviour
         var x_scr = x.gameObject.GetComponent<UnitProcessor>();
         if (x_scr == null) return;
         if (x_scr.self_type == class_) return;
-        SceneGameContainer.e_proc.DamageDeal(x_scr, 23);
+        GameLinksContainer.e_proc.DamageDeal(x_scr, 23);
     }
 
     // Update is called once per frame
