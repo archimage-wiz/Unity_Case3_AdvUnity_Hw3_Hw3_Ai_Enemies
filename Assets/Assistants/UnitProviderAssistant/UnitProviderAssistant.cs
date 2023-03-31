@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class UnitProviderAssistant : MonoBehaviour, IDestroyUnit, INewUnit
 {
+    private IDepencyProvider _dep = LinkR.self;
     private List<UnitProcessor> units = new List<UnitProcessor>();
     
     void Start() {
-        LinkR.RegisterAsssistant(typeof(IDestroyUnit), this);
-        LinkR.RegisterAsssistant(typeof(INewUnit), this);
+        _dep = LinkR.self;
+        _dep.RegisterAsssistant(typeof(IDestroyUnit), this);
+        _dep.RegisterAsssistant(typeof(INewUnit), this);
     }
     
     public void OnNewUnit(Component component_script) {

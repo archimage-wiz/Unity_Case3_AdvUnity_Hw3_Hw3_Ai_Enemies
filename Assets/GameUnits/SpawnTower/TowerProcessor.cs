@@ -16,13 +16,15 @@ public class TowerProcessor : MonoBehaviour, IPointerClickHandler
     [SerializeField] private float spawn_time = 12;
     public SpawnMenuItemsData spawn_parameters;
     private Coroutine units_spawner_coroutine;
+    private IDepencyProvider depency_provider;
     
     private void Awake() {
-        LinkR.AddTower(tower_type, gameObject);
     }
 
     void Start()
     {
+        depency_provider = LinkR.self;
+        depency_provider.AddTower(tower_type, gameObject);
         spawn_parameters = new SpawnMenuItemsData();
         spawn_parameters.tower_spawn_speed = spawn_time;
         spawn_parameters.move_speed = 0.95f;
@@ -36,10 +38,11 @@ public class TowerProcessor : MonoBehaviour, IPointerClickHandler
     {
         while (true)
         {
-            var new_unit = Instantiate(((IGameResourceProvider)LinkR.GetDepency(typeof(IGameResourceProvider)))?.GetGameObject("Unit"));
+            var new_unit = Instantiate(((IGameResourceProvider)depency_provider.GetDepency(typeof(IGameResourceProvider)))?.GetGameObject("Unit"));
             new_unit.transform.SetParent(GameLinksContainer.InstantiatedObjectsContainer);
             var new_unit_script = new_unit.GetComponentInChildren<UnitProcessor>();
-            ((INewUnit)LinkR.GetDepency(typeof(INewUnit)))?.OnNewUnit(new_unit_script);
+            new_unit_script.DepencyInject(depency_provider);
+            ((INewUnit)depency_provider.GetDepency(typeof(INewUnit)))?.OnNewUnit(new_unit_script);
 
             new_unit_script.self_type = tower_type;
             new_unit.GetComponentInChildren<UnitBody>().GetComponent<MeshRenderer>().material = class_materials[(int)tower_type];

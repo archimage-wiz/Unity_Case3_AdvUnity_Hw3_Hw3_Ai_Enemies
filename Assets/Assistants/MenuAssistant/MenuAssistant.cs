@@ -11,7 +11,7 @@ public class MenuAssistant : MonoBehaviour
     
     public void OnClickApplyButtonTowers() {
         (TowerTypes tt, SpawnMenuItemsData smid) = GameLinksContainer.spawn_menu.GetData();
-        var cur_t = LinkR.GetTower(tt).GetComponent<TowerProcessor>();
+        var cur_t = LinkR.self.GetTower(tt).GetComponent<TowerProcessor>();
         cur_t.spawn_parameters.tower_spawn_speed = smid.tower_spawn_speed;
         cur_t.spawn_parameters.move_speed = smid.move_speed;
         cur_t.spawn_parameters.enemy_detect_radius = smid.enemy_detect_radius;

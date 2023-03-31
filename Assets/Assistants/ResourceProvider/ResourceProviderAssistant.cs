@@ -6,10 +6,12 @@ using UnityEngine;
 
 public class ResourceProviderAssistant : MonoBehaviour, IGameResourceProvider
 {
+    private IDepencyProvider _dep;
     private Dictionary<string, GameObject> game_objects_loaded = new Dictionary<string, GameObject>();
 
     public void Start() {
-        LinkR.RegisterAsssistant(typeof(IGameResourceProvider), this);
+        _dep = LinkR.self;
+        _dep.RegisterAsssistant(typeof(IGameResourceProvider), this);
         
     }
     

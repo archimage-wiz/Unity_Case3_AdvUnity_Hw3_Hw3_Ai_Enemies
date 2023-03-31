@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class UnitProcessor : MonoBehaviour
 {
-    //private IResourceProviderAssistant _res;
+    private IDepencyProvider _dep;
     private Rigidbody self_rigidbody;
     private HealthBar self_healthbar;
     public GameObject target;
@@ -42,11 +42,9 @@ public class UnitProcessor : MonoBehaviour
         self_engine = StartCoroutine(Engine());
     }
     
-    // public void DepencyInject(INewUnit NewUnitMethod, IDestroyUnit DestroyUnitCall, IResourceProviderAssistant res) {
-    //     this.NewUnitMethod = NewUnitMethod;
-    //     this.DestroYUnitCall = DestroyUnitCall;
-    //     this._res = res;
-    // }
+    public void DepencyInject(IDepencyProvider dep) {
+        this._dep = dep;
+    }
 
     private IEnumerator Engine()
     {
@@ -153,7 +151,7 @@ public class UnitProcessor : MonoBehaviour
 
     private void SelfDestroy()
     {
-        ((IDestroyUnit)LinkR.GetDepency(typeof(IDestroyUnit)))?.OnDestroyUnit(this);
+        ((IDestroyUnit)_dep.GetDepency(typeof(IDestroyUnit)))?.OnDestroyUnit(this);
         StopCoroutine(self_engine);
         Destroy(gameObject);
     }
@@ -192,7 +190,7 @@ public class UnitProcessor : MonoBehaviour
             TowerTypes target_type = (TowerTypes)UnityEngine.Random.Range(0, 3);
             if ((target_type != self_type && flee == false) || (target_type == self_type && flee == true))
             {
-                target = LinkR.GetTower(target_type);
+                target = _dep.GetTower(target_type);
                 target_is_enemy = false;
             }
         }
@@ -214,7 +212,7 @@ public class UnitProcessor : MonoBehaviour
     {
         if (target != null)
         {
-            var bullet = Instantiate(((IGameResourceProvider)LinkR.GetDepency(typeof(IGameResourceProvider)))?.GetGameObject("StrongAttackBullet"));
+            var bullet = Instantiate(((IGameResourceProvider)_dep.GetDepency(typeof(IGameResourceProvider)))?.GetGameObject("StrongAttackBullet"));
             bullet.transform.position = transform.position + transform.forward * 0.1f;
             bullet.transform.rotation = transform.rotation;
             var bullet_script = bullet.GetComponent<StrongAttackBullet>();
