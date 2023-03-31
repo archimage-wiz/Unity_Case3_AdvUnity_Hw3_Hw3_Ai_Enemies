@@ -7,9 +7,7 @@ using UnityEngine;
 
 public class UnitProcessor : MonoBehaviour
 {
-    private INewUnit NewUnitMethod;
-    private IDestroyUnit DestroYUnitCall;
-    private IResourceProviderAssistant _res;
+    //private IResourceProviderAssistant _res;
     private Rigidbody self_rigidbody;
     private HealthBar self_healthbar;
     public GameObject target;
@@ -39,16 +37,16 @@ public class UnitProcessor : MonoBehaviour
         self_healthbar = GetComponentInChildren<HealthBar>();
         lineRenderer = GetComponent<LineRenderer>();
         self_mode = UnitModes.Idle;
-        if ( NewUnitMethod == null ) {throw new Exception("something goes wrong here");}
-        NewUnitMethod?.OnNewUnit(this);
+        //_res = (IResourceProviderAssistant)LinkR.GetDepency(typeof(IResourceProviderAssistant));
+        
         self_engine = StartCoroutine(Engine());
     }
     
-    public void DepencyInject(INewUnit NewUnitMethod, IDestroyUnit DestroYUnitCall, IResourceProviderAssistant res) {
-        this.NewUnitMethod = NewUnitMethod;
-        this.DestroYUnitCall = DestroYUnitCall;
-        this._res = res;
-    }
+    // public void DepencyInject(INewUnit NewUnitMethod, IDestroyUnit DestroyUnitCall, IResourceProviderAssistant res) {
+    //     this.NewUnitMethod = NewUnitMethod;
+    //     this.DestroYUnitCall = DestroyUnitCall;
+    //     this._res = res;
+    // }
 
     private IEnumerator Engine()
     {
@@ -155,7 +153,7 @@ public class UnitProcessor : MonoBehaviour
 
     private void SelfDestroy()
     {
-        DestroYUnitCall.OnDestroyUnit(this);
+        ((IDestroyUnit)LinkR.GetDepency(typeof(IDestroyUnit)))?.OnDestroyUnit(this);
         StopCoroutine(self_engine);
         Destroy(gameObject);
     }
@@ -194,7 +192,7 @@ public class UnitProcessor : MonoBehaviour
             TowerTypes target_type = (TowerTypes)UnityEngine.Random.Range(0, 3);
             if ((target_type != self_type && flee == false) || (target_type == self_type && flee == true))
             {
-                target = GameLinksContainer.towers[target_type];
+                target = LinkR.GetTower(target_type);
                 target_is_enemy = false;
             }
         }
@@ -216,7 +214,7 @@ public class UnitProcessor : MonoBehaviour
     {
         if (target != null)
         {
-            var bullet = Instantiate(_res.GetGameObject("StrongAttackBullet"));
+            var bullet = Instantiate(((IGameResourceProvider)LinkR.GetDepency(typeof(IGameResourceProvider)))?.GetGameObject("StrongAttackBullet"));
             bullet.transform.position = transform.position + transform.forward * 0.1f;
             bullet.transform.rotation = transform.rotation;
             var bullet_script = bullet.GetComponent<StrongAttackBullet>();

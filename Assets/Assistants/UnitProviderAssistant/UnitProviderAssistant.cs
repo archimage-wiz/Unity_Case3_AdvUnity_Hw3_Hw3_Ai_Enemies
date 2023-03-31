@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UnitProviderAssistant : MonoBehaviour, INewUnit, IDestroyUnit
+public class UnitProviderAssistant : MonoBehaviour, IDestroyUnit, INewUnit
 {
     private List<UnitProcessor> units = new List<UnitProcessor>();
     
     void Start() {
-        AssistantsContainer.RegisterAsssistant(typeof(IDestroyUnit), this);
-        AssistantsContainer.RegisterAsssistant(typeof(INewUnit), this);
+        LinkR.RegisterAsssistant(typeof(IDestroyUnit), this);
+        LinkR.RegisterAsssistant(typeof(INewUnit), this);
     }
     
     public void OnNewUnit(Component component_script) {
@@ -17,6 +17,7 @@ public class UnitProviderAssistant : MonoBehaviour, INewUnit, IDestroyUnit
     public void OnDestroyUnit(Component unit_script)
     {
         units.Remove((UnitProcessor)unit_script);
+        print("Removed unit from db");
         foreach (var unit in units)
         {
             if (unit.target == unit_script.gameObject)

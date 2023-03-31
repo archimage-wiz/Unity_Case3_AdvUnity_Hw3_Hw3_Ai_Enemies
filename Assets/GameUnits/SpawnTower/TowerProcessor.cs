@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+
 
 
 public class TowerProcessor : MonoBehaviour, IPointerClickHandler
@@ -14,15 +16,13 @@ public class TowerProcessor : MonoBehaviour, IPointerClickHandler
     [SerializeField] private float spawn_time = 12;
     public SpawnMenuItemsData spawn_parameters;
     private Coroutine units_spawner_coroutine;
-    private IResourceProviderAssistant _res;
     
     private void Awake() {
-        GameLinksContainer.towers.Add(tower_type, gameObject);
+        LinkR.AddTower(tower_type, gameObject);
     }
 
     void Start()
     {
-        _res = (IResourceProviderAssistant)AssistantsContainer.GetDepency(typeof(IResourceProviderAssistant));
         spawn_parameters = new SpawnMenuItemsData();
         spawn_parameters.tower_spawn_speed = spawn_time;
         spawn_parameters.move_speed = 0.95f;
@@ -36,20 +36,15 @@ public class TowerProcessor : MonoBehaviour, IPointerClickHandler
     {
         while (true)
         {
-            var new_unit = Instantiate(_res.GetGameObject("Unit"));
+            var new_unit = Instantiate(((IGameResourceProvider)LinkR.GetDepency(typeof(IGameResourceProvider)))?.GetGameObject("Unit"));
             new_unit.transform.SetParent(GameLinksContainer.InstantiatedObjectsContainer);
             var new_unit_script = new_unit.GetComponentInChildren<UnitProcessor>();
-            
-            new_unit_script.DepencyInject(
-                (INewUnit)AssistantsContainer.GetDepency(typeof(INewUnit)), 
-                (IDestroyUnit)AssistantsContainer.GetDepency(typeof(IDestroyUnit)),
-                _res
-                );
+            ((INewUnit)LinkR.GetDepency(typeof(INewUnit)))?.OnNewUnit(new_unit_script);
 
             new_unit_script.self_type = tower_type;
             new_unit.GetComponentInChildren<UnitBody>().GetComponent<MeshRenderer>().material = class_materials[(int)tower_type];
 
-            this.transform.Rotate(0, Random.Range(-45, 45), 0);
+            this.transform.Rotate(0, UnityEngine.Random.Range(-45, 45), 0);
             new_unit.transform.position = this.transform.position + this.transform.forward.normalized;
 
             new_unit_script.move_speed = spawn_parameters.move_speed;

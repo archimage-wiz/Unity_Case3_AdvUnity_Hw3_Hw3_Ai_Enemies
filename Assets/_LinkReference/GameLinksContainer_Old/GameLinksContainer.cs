@@ -17,7 +17,7 @@ public static class GameLinksContainer
     
     // game units list
     
-    public static Dictionary<TowerTypes, GameObject> towers = new Dictionary<TowerTypes, GameObject>();
+    
     
     // prefabs
 
